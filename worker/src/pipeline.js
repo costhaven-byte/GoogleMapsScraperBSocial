@@ -233,8 +233,11 @@ async function scrapeMaps({ cfg, queries, budget, profileDir, reporter, progress
         });
         // Soft block: Google keeps showing star ratings but hides every review.
         hiddenStreak = place.reviewsHidden ? hiddenStreak + 1 : 0;
+        // Usually Google's signed-out "limited view" (no Reviews tab), not a block: stop without the 24h pause.
         if (hiddenStreak >= 3) {
-          throw new GoogleBlockedError(`Google is hiding reviews (${hiddenStreak} places in a row show a rating but no reviews). This is a soft block on your connection`);
+          log(`STOPPED: Google Maps is not showing reviews (${hiddenStreak} places in a row have a rating but no Reviews tab). This PC is most likely not signed in to Google. Run \`npm run login\`, sign in, close the window, then search again. No pause was applied.`, 'error');
+          stoppedEarly = true;
+          break queryLoop;
         }
         await sleep(randomBetween(cfg.scraping.delayMsBetweenPlaces));
       }
