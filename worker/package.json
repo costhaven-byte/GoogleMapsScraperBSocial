@@ -1,0 +1,20 @@
+{
+  "name": "gscraper-worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local worker for the GScraper web app: runs Google Maps searches in Chromium and uploads results over HTTPS.",
+  "main": "src/worker.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/worker.js",
+    "once": "node src/worker.js --once",
+    "login": "node src/worker.js --login",
+    "test": "node --test test/worker.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "playwright": "^1.63.0"
+  }
+}

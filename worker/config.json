@@ -1,0 +1,45 @@
+{
+  "activity": {
+    "maxReviewAgeMonths": 11,
+    "excludeTemporarilyClosed": true,
+    "allowUnverified": false
+  },
+  "contact": {
+    "phoneIsChannel": false
+  },
+  "limits": {
+    "dailyBusinesses": 300,
+    "perRunBusinesses": 100,
+    "cooldownMinutes": 60,
+    "minRunBusinesses": 10,
+    "blockPauseHours": 24
+  },
+  "scraping": {
+    "headless": true,
+    "maxResultsPerQuery": 40,
+    "delayMsBetweenPlaces": [1500, 3500],
+    "websiteConcurrency": 3,
+    "websiteTimeoutMs": 20000,
+    "reviewsToRead": 10,
+    "checkSocials": true
+  },
+  "enrichment": {
+    "cacheDays": 7,
+    "failureCacheHours": 6,
+    "perHostDelayMs": 3000,
+    "maxCrawlDelaySeconds": 20,
+    "maxExtraPagesPerSite": 3
+  },
+  "services": {
+    "web": true,
+    "conversion": true,
+    "paidMedia": true,
+    "social": true,
+    "automation": true,
+    "brand": true
+  },
+  "priority": {
+    "hot": 50,
+    "warm": 30
+  }
+}
