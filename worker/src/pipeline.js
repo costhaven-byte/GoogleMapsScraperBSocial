@@ -44,21 +44,42 @@ const withDefaults = (place) => ({
   socialProfiles: [], listingEmails: [], reviewDates: [], ownerResponseDates: [], reviewTexts: [], ...place,
 });
 
-const mapsContext = (profileDir, headless) =>
-  chromium.launchPersistentContext(profileDir, {
-    headless,
-    locale: 'en-US',
-    viewport: { width: 1280, height: 900 },
-    args: ['--disable-blink-features=AutomationControlled', ...BROWSER_ARGS],
-  });
+// Chromium lets one browser use a profile at a time. A second launch is handed to the running
+// browser (which just opens a blank tab there) and Playwright fails with this message.
+const PROFILE_IN_USE = /existing browser session|profile is already in use/i;
+
+function profileInUseMessage(forLogin) {
+  const holder = forLogin
+    ? 'the worker is scraping right now, or another sign-in window is still open'
+    : 'the Google sign-in window from `npm run login` is still open';
+  return `The Google browser profile is already in use: most likely ${holder}. `
+    + 'Close every Chromium window this worker opened (also look in Task Manager for "Google Chrome for Testing" or "Chromium" and end it), then try again. '
+    + 'Only one of `npm run login` and the worker can use the browser at a time.';
+}
+
+async function mapsContext(profileDir, headless, { forLogin = false } = {}) {
+  try {
+    return await chromium.launchPersistentContext(profileDir, {
+      headless,
+      locale: 'en-US',
+      viewport: { width: 1280, height: 900 },
+      args: ['--disable-blink-features=AutomationControlled', ...BROWSER_ARGS],
+    });
+  } catch (err) {
+    if (PROFILE_IN_USE.test(err.message)) throw new Error(profileInUseMessage(forLogin));
+    throw err;
+  }
+}
 
 async function login(profileDir) {
-  const ctx = await mapsContext(profileDir, false);
+  const ctx = await mapsContext(profileDir, false, { forLogin: true });
   const page = ctx.pages()[0] || (await ctx.newPage());
   await page.goto('https://www.google.com/maps?hl=en');
   console.log('A browser window is open. Accept or reject the consent prompt and sign in to Google.');
   console.log('This removes Google\'s "limited view" so review dates are visible. Close the window when done.');
+  console.log('Searches from the web app will fail while this window is open.');
   await new Promise((resolve) => ctx.on('close', resolve));
+  console.log('Sign-in window closed. The worker can run searches now.');
 }
 
 /**

@@ -179,5 +179,6 @@ Replace the `src/` folder and `package.json` with the new versions, keeping `.en
 | `Daily scraping budget for this internet connection is used up` | Another worker on the same connection has spent the allowance, or this one has. Slots free up 24 h after each business was scraped |
 | Run says **BLOCKED** | Google soft-blocked the connection. Scraping pauses for `blockPauseHours`. Signing in doesn't lift a block |
 | Many "rating but no review dates" exclusions | Run `npm run login`; signed-out Maps hides most reviews |
+| "Opening in existing browser session" / a blank tab opens when a run starts | The sign-in window from `npm run login` is still open (or a leftover Chromium process). Close it, end any "Google Chrome for Testing" process in Task Manager, then search again |
 | Windows Firewall prompt when Chromium starts | Choose Cancel. The worker doesn't need incoming connections |
 | Run marked failed: "worker stopped responding" | The PC slept, lost its connection or the window was closed. Re-process the run to finish it from its saved places |
